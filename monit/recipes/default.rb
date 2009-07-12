@@ -19,7 +19,7 @@ end
 
 remote_file "/tmp/monit-5.0.3.tar.gz" do
   source "http://mmonit.com/monit/dist/monit-5.0.3.tar.gz"
-  mode "0700"
+  mode "0644"
   checksum "5dd2539b3c61d109fa75ef"
   # Does this need a not_if { FileTest.exists?("/tmp/monit-5.0.3.tar.gz") }?
 end
@@ -46,7 +46,7 @@ end
 
 template "/etc/monitrc" do
   source "monitrc.erb"
-  mode 0644
+  mode "0700"
   variables :alert_email => node[:monit][:alert_email],
             :poll_interval => node[:monit][:poll_interval]
   notifies :restart, resources(:service => "monit")
