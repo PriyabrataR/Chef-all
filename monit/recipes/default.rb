@@ -42,6 +42,7 @@ service "monit" do
   stop_command "monit quit"
   restart_command "monit && monit reload"
   reload_command "monit && monit reload"
+  supports :restart => true, :start => true, :stop => true
 end
 
 template "/etc/monitrc" do
@@ -51,6 +52,8 @@ template "/etc/monitrc" do
             :poll_interval => node[:monit][:poll_interval]
   notifies :restart, resources(:service => "monit")
 end
+
+# TODO: Open ec2 security port
 
 
 
