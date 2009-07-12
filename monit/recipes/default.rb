@@ -37,19 +37,19 @@ bash "install_monit" do
   not_if { FileTest.exists?("/usr/local/bin/monit") }
 end
 
-service "monit" do
-  start_command "monit"
-  stop_command "monit quit"
-  restart_command "monit && monit reload"
-  reload_command "monit && monit reload"
-end
-
 template "/etc/monitrc" do
   source "monitrc.erb"
   mode "0700"
   variables :alert_email => node[:monit][:alert_email],
             :poll_interval => node[:monit][:poll_interval]
   notifies :restart, resources(:service => "monit")
+end
+
+service "monit" do
+  start_command "monit"
+  stop_command "monit quit"
+  restart_command "monit && monit reload"
+  reload_command "monit && monit reload"
 end
 
 
