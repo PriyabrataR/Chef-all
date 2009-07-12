@@ -40,8 +40,8 @@ end
 service "monit" do
   start_command "monit"
   stop_command "monit quit"
-  restart_command "monit reload"
-  reload_command "monit reload"
+  restart_command "monit && monit reload"
+  reload_command "monit && monit reload"
 end
 
 template "/etc/monitrc" do
