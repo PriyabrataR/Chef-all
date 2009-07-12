@@ -44,7 +44,7 @@ service "monit" do
   reload_command "monit reload"
 end
 
-template "/etc/monit/monitrc" do
+template "/etc/monitrc" do
   source "monitrc.erb"
   mode 0644
   variables :alert_email => node[:monit][:alert_email],
