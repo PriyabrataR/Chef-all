@@ -38,7 +38,6 @@ bash "install_monit" do
 end
 
 service "monit" do
-  command "monit && monit reload"
   start_command "monit"
   stop_command "monit quit"
   restart_command "monit reload"
