@@ -42,8 +42,7 @@ service "monit" do
   stop_command "monit quit"
   restart_command "monit && monit reload"
   reload_command "monit && monit reload"
-  status_command "monit status"
-  supports :restart => true, :start => true, :stop => true, :status => true
+  supports :restart => true, :start => true, :stop => true
   action :start
 end
 
