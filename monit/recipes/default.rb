@@ -11,19 +11,46 @@
 # limitations under the License.
 #
 
-service "monit" do
-  supports :restart => true
-  action :enable
+include_recipe "build-essential"
+
+%w{ flex bison }.each do |pkg|
+  package pkg
 end
 
-munin_server_regexs = []
-search(:nodes, "munin_server_regex:*").each do |ip|
-  munin_server_regexs << ip unless munin_server_regexs.detect? { |i| i == ip }
+remote_file "/tmp/monit-5.0.3.tar.gz" do
+  source "http://mmonit.com/monit/dist/monit-5.0.3.tar.gz"
+  mode "0644"
+  checksum "5dd2539b3c61d109fa75ef"
+  # Does this need a not_if { FileTest.exists?("/tmp/monit-5.0.3.tar.gz") }?
+end
+
+bash "install_monit" do
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
+    tar -xcvf /tmp/monit-5.0.3.tar.gz
+    cd monit-5.0.3
+    ./configure 
+    make
+    make install
+  EOH
+  not_if { FileTest.exists?("/usr/local/bin/monit") }
+end
+
+service "monit" do
+  command "monit && monit reload"
+  start_command "monit"
+  stop_command "monit quit"
+  restart_command "monit reload"
+  reload_command "monit reload"
 end
 
 template "/etc/monit/monitrc" do
-  source "monitrc.conf.erb"
+  source "monitrc.erb"
   mode 0644
-  variables :alert_email => alert_email
+  variables :alert_email => node[:monit][:alert_email],
+            :poll_interval => node[:monit][:poll_interval]
   notifies :restart, resources(:service => "monit")
 end
+
+
